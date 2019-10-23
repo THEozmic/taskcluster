@@ -105,6 +105,7 @@ class AwsProvider extends Provider {
         });
       }
 
+      const instanceCount = Math.ceil(Math.min(toSpawnCounter, toSpawnPerConfig) / config.capacityPerInstance);
       let spawned;
       try {
         spawned = await this.ec2s[config.region].runInstances({
@@ -112,8 +113,8 @@ class AwsProvider extends Provider {
 
           UserData: userData.toString('base64'), // The string needs to be base64-encoded. See the docs above
 
-          MaxCount: Math.min(toSpawnCounter, toSpawnPerConfig),
-          MinCount: Math.min(toSpawnCounter, toSpawnPerConfig),
+          MaxCount: instanceCount,
+          MinCount: instanceCount,
           TagSpecifications: [
             ...otherTagSpecs,
             {
